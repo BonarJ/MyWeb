@@ -1,8 +1,1484 @@
-<html>
-    <head>
-    <title>Selamat datang di website kami</title>
-  </head>
-  <body>
-    <h1>Welcome to my site</h1>
-  </body> 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevCards — Flashcard Belajar Web & GitHub (100% HTML & CSS)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: #eef2ff;
+      --accent-text: #3730a3;
+      --html-color: #ea580c;
+      --html-bg: #fff7ed;
+      --html-border: #fed7aa;
+      --css-color: #0284c7;
+      --css-bg: #f0f9ff;
+      --css-border: #bae6fd;
+      --git-color: #7c3aed;
+      --git-bg: #f5f3ff;
+      --git-border: #ddd6fe;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --card-front-bg: #ffffff;
+      --card-back-bg: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+      --card-back-text: #f8fafc;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -3px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 30px -10px rgba(79, 70, 229, 0.15);
+      --code-bg: rgba(15, 23, 42, 0.06);
+      --code-back-bg: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Dark Mode via Pure CSS :has() */
+    body:has(#theme-toggle:checked) {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-subtle: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #1e293b;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-soft: rgba(99, 102, 241, 0.15);
+      --accent-text: #a5b4fc;
+      --html-color: #fb923c;
+      --html-bg: rgba(234, 88, 12, 0.12);
+      --html-border: rgba(234, 88, 12, 0.3);
+      --css-color: #38bdf8;
+      --css-bg: rgba(2, 132, 199, 0.12);
+      --css-border: rgba(2, 132, 199, 0.3);
+      --git-color: #a78bfa;
+      --git-bg: rgba(124, 58, 237, 0.12);
+      --git-border: rgba(124, 58, 237, 0.3);
+      --success: #4ade80;
+      --success-bg: rgba(22, 163, 74, 0.15);
+      --success-border: rgba(74, 222, 128, 0.35);
+      --danger: #f87171;
+      --danger-bg: rgba(220, 38, 38, 0.15);
+      --danger-border: rgba(248, 113, 113, 0.35);
+      --card-front-bg: #151e32;
+      --card-back-bg: linear-gradient(145deg, #1e1b4b 0%, #3730a3 100%);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 20px 30px -10px rgba(99, 102, 241, 0.25);
+      --code-bg: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      counter-reset: mastered-count 0 quiz-correct 0;
+    }
+
+    /* Hide all control inputs visually while keeping them accessible */
+    .sr-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* CSS Counters for Mastered Cards and Quiz Score */
+    .mastered-check:checked {
+      counter-increment: mastered-count;
+    }
+
+    .quiz-correct-opt:checked {
+      counter-increment: quiz-correct;
+    }
+
+    .mastered-number::after {
+      content: counter(mastered-count);
+    }
+
+    .quiz-score-number::after {
+      content: counter(quiz-correct);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 1.25rem 4rem;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: color-mix(in srgb, var(--bg-secondary) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 0;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .navbar-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-pure-css {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    /* Score Pill in Navbar */
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+    }
+
+    /* Reset Button */
+    .btn-reset {
+      appearance: none;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-reset:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    /* Theme Toggle Label */
+    .theme-btn {
+      cursor: pointer;
+      user-select: none;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .theme-text-dark {
+      display: inline;
+    }
+    .theme-text-light {
+      display: none;
+    }
+
+    body:has(#theme-toggle:checked) .theme-text-dark {
+      display: none;
+    }
+    body:has(#theme-toggle:checked) .theme-text-light {
+      display: inline;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 2.25rem 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      font-size: clamp(1.6rem, 3vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      max-width: 640px;
+    }
+
+    /* Mode Switcher Tabs (Flashcard vs Kuis vs Panduan GitHub) */
+    .mode-tabs {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      padding: 0.3rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .mode-tab-label {
+      cursor: pointer;
+      user-select: none;
+      padding: 0.5rem 1rem;
+      border-radius: 9px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .mode-tab-label:hover {
+      color: var(--text-primary);
+    }
+
+    body:has(#mode-cards:checked) label[for="mode-cards"],
+    body:has(#mode-quiz:checked) label[for="mode-quiz"],
+    body:has(#mode-guide:checked) label[for="mode-guide"] {
+      background: var(--bg-secondary);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Filter & Stats Bar */
+    .controls-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem;
+    }
+
+    .category-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      cursor: pointer;
+      user-select: none;
+      padding: 0.42rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .filter-pill:hover {
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .filter-count {
+      font-size: 0.72rem;
+      padding: 0.05rem 0.42rem;
+      border-radius: 999px;
+      background: rgba(100, 116, 139, 0.15);
+    }
+
+    body:has(#cat-all:checked) label[for="cat-all"],
+    body:has(#cat-html:checked) label[for="cat-html"],
+    body:has(#cat-css:checked) label[for="cat-css"],
+    body:has(#cat-git:checked) label[for="cat-git"],
+    body:has(#cat-unmastered:checked) label[for="cat-unmastered"] {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    body:has(#cat-all:checked) label[for="cat-all"] .filter-count,
+    body:has(#cat-html:checked) label[for="cat-html"] .filter-count,
+    body:has(#cat-css:checked) label[for="cat-css"] .filter-count,
+    body:has(#cat-git:checked) label[for="cat-git"] .filter-count,
+    body:has(#cat-unmastered:checked) label[for="cat-unmastered"] .filter-count {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    /* Quick Flip All Toggle */
+    .flip-all-label {
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.83rem;
+      font-weight: 600;
+      padding: 0.42rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .flip-all-label:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    body:has(#flip-all:checked) .flip-all-label {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Flashcard Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.35rem;
+    }
+
+    /* Individual Flashcard Wrapper */
+    .flashcard-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Pure CSS Category Filtering */
+    body:has(#cat-html:checked) .flashcard-item:not([data-cat="html"]) {
+      display: none;
+    }
+    body:has(#cat-css:checked) .flashcard-item:not([data-cat="css"]) {
+      display: none;
+    }
+    body:has(#cat-git:checked) .flashcard-item:not([data-cat="git"]) {
+      display: none;
+    }
+    body:has(#cat-unmastered:checked) .flashcard-item:has(.mastered-check:checked) {
+      display: none;
+    }
+
+    /* 3D Scene */
+    .card-scene {
+      perspective: 1100px;
+      height: 270px;
+      width: 100%;
+    }
+
+    .card-flipper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      user-select: none;
+      display: block;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Flip when individual card checkbox OR global flip-all checkbox is checked */
+    .flip-check:checked ~ .card-scene .card-flipper,
+    body:has(#flip-all:checked) .card-scene .card-flipper {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card-scene:hover .card-face {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-front {
+      background: var(--card-front-bg);
+      color: var(--text-primary);
+    }
+
+    .card-back {
+      background: var(--card-back-bg);
+      color: var(--card-back-text);
+      transform: rotateY(180deg);
+      border-color: rgba(129, 140, 248, 0.35);
+    }
+
+    /* Highlight card border if mastered */
+    .flashcard-item:has(.mastered-check:checked) .card-front {
+      border-color: var(--success);
+      box-shadow: 0 8px 20px -6px rgba(22, 163, 74, 0.18);
+    }
+
+    .card-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .cat-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .cat-html {
+      background: var(--html-bg);
+      color: var(--html-color);
+      border: 1px solid var(--html-border);
+    }
+
+    .cat-css {
+      background: var(--css-bg);
+      color: var(--css-color);
+      border: 1px solid var(--css-border);
+    }
+
+    .cat-git {
+      background: var(--git-bg);
+      color: var(--git-color);
+      border: 1px solid var(--git-border);
+    }
+
+    .card-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .card-back .card-number {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .card-question {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin: auto 0;
+    }
+
+    .card-answer {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: rgba(248, 250, 252, 0.94);
+      margin: auto 0;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      background: var(--code-bg);
+    }
+
+    .card-back code {
+      background: var(--code-back-bg);
+      color: #fde047;
+    }
+
+    .code-snippet {
+      display: block;
+      margin-top: 0.55rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.45);
+      color: #a5f3fc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .card-footer-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border-color);
+      padding-top: 0.65rem;
+    }
+
+    .card-back .card-footer-hint {
+      color: rgba(255, 255, 255, 0.65);
+      border-top-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Mastered Toggle Button under Each Card */
+    .mastered-label {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.5rem 0.85rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .mastered-label:hover {
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .mastered-text-done {
+      display: none;
+    }
+
+    .mastered-check:checked ~ .mastered-label {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success-border);
+    }
+
+    .mastered-check:checked ~ .mastered-label .mastered-text-todo {
+      display: none;
+    }
+
+    .mastered-check:checked ~ .mastered-label .mastered-text-done {
+      display: inline;
+    }
+
+    /* Sections Visibility by Mode */
+    .section-cards,
+    .section-quiz,
+    .section-guide {
+      display: none;
+    }
+
+    body:has(#mode-cards:checked) .section-cards {
+      display: block;
+    }
+    body:has(#mode-quiz:checked) .section-quiz {
+      display: block;
+    }
+    body:has(#mode-guide:checked) .section-guide {
+      display: block;
+    }
+
+    /* QUIZ SECTION (100% Pure CSS) */
+    .quiz-header-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quiz-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .quiz-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quiz-q-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .quiz-opt-label {
+      cursor: pointer;
+      user-select: none;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .quiz-opt-label:hover {
+      border-color: var(--accent);
+    }
+
+    /* Correct vs Wrong feedback in Pure CSS */
+    .quiz-correct-opt:checked + .quiz-opt-label {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .quiz-correct-opt:checked + .quiz-opt-label::after {
+      content: "✓ Tepat!";
+      font-size: 0.78rem;
+    }
+
+    .quiz-wrong-opt:checked + .quiz-opt-label {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .quiz-wrong-opt:checked + .quiz-opt-label::after {
+      content: "✗ Kurang Tepat";
+      font-size: 0.78rem;
+    }
+
+    .quiz-explanation {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--text-primary);
+      font-size: 0.88rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    .quiz-card:has(input[type="radio"]:checked) .quiz-explanation {
+      display: block;
+    }
+
+    /* GITHUB PAGES GUIDE SECTION */
+    .guide-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .step-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .step-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+
+    .step-num {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.65rem;
+    }
+
+    .step-box h3 {
+      font-size: 0.98rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .step-box p {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+    }
+
+    details.faq-item {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.9rem 1.15rem;
+    }
+
+    details.faq-item summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    details.faq-item p {
+      margin-top: 0.65rem;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      .hero-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Form wrapper allows native HTML <button type="reset"> to reset all checkboxes and radio buttons without JS -->
+  <form id="flashcard-app">
+    <!-- Global Hidden State Controls (100% Pure HTML & CSS) -->
+    <input type="checkbox" id="theme-toggle" class="sr-input">
+    <input type="checkbox" id="flip-all" class="sr-input">
+
+    <!-- Mode Switcher Radios -->
+    <input type="radio" name="app-mode" id="mode-cards" class="sr-input" checked>
+    <input type="radio" name="app-mode" id="mode-quiz" class="sr-input">
+    <input type="radio" name="app-mode" id="mode-guide" class="sr-input">
+
+    <!-- Category Filter Radios -->
+    <input type="radio" name="cat-filter" id="cat-all" class="sr-input" checked>
+    <input type="radio" name="cat-filter" id="cat-html" class="sr-input">
+    <input type="radio" name="cat-filter" id="cat-css" class="sr-input">
+    <input type="radio" name="cat-filter" id="cat-git" class="sr-input">
+    <input type="radio" name="cat-filter" id="cat-unmastered" class="sr-input">
+
+    <!-- Sticky Navbar -->
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <div class="brand-icon">⚡</div>
+          <div class="brand-title">
+            DevCards
+            <span class="badge-pure-css">100% HTML &amp; CSS</span>
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <div class="score-pill" title="Dihitung otomatis dengan CSS Counter">
+            <span>🏆 Dikuasai:</span>
+            <span><strong class="mastered-number"></strong> / 9 Kartu</span>
+          </div>
+
+          <button type="reset" class="btn-reset" title="Kembalikan semua kartu & kuis ke awal">
+            ↺ Reset Progres
+          </button>
+
+          <label for="theme-toggle" class="theme-btn">
+            <span class="theme-text-dark">🌙 Mode Gelap</span>
+            <span class="theme-text-light">☀️ Mode Terang</span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Hero & Mode Switcher -->
+      <section class="hero">
+        <div class="hero-header">
+          <div>
+            <h1 class="hero-title">Flashcard Belajar Web &amp; GitHub</h1>
+            <p class="hero-subtitle">
+              Klik kartu untuk membalik jawaban 3D, saring materi sesuai topik, dan tandai kartu yang sudah Anda kuasai—semuanya berjalan murni dengan HTML5 &amp; CSS3 tanpa JavaScript.
+            </p>
+          </div>
+
+          <div class="mode-tabs" role="tablist">
+            <label for="mode-cards" class="mode-tab-label">🗂️ Kartu Flashcard (9)</label>
+            <label for="mode-quiz" class="mode-tab-label">🎯 Kuis Cepat (4)</label>
+            <label for="mode-guide" class="mode-tab-label">🚀 Cara Upload ke GitHub</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODE 1: FLASHCARDS -->
+      <section class="section-cards">
+        <div class="controls-bar">
+          <div class="category-filters">
+            <label for="cat-all" class="filter-pill">
+              Semua Topik <span class="filter-count">9</span>
+            </label>
+            <label for="cat-html" class="filter-pill">
+              HTML5 Semantik <span class="filter-count">3</span>
+            </label>
+            <label for="cat-css" class="filter-pill">
+              CSS3 Modern <span class="filter-count">3</span>
+            </label>
+            <label for="cat-git" class="filter-pill">
+              Git &amp; GitHub Pages <span class="filter-count">3</span>
+            </label>
+            <label for="cat-unmastered" class="filter-pill">
+              ⏳ Belum Hafal
+            </label>
+          </div>
+
+          <label for="flip-all" class="flip-all-label">
+            🔄 Intip Semua Jawaban
+          </label>
+        </div>
+
+        <div class="cards-grid">
+          <!-- CARD 1: HTML -->
+          <article class="flashcard-item" data-cat="html">
+            <input type="checkbox" id="flip-1" class="sr-input flip-check">
+            <input type="checkbox" id="master-1" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-1" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">HTML5</span>
+                    <span class="card-number">#01</span>
+                  </div>
+                  <div class="card-question">
+                    Bagaimana cara membuat panel buka-tutup (<em>accordion</em>) interaktif di HTML tanpa menggunakan JavaScript?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">Jawaban #01</span>
+                    <span class="card-number">HTML5 Native</span>
+                  </div>
+                  <div class="card-answer">
+                    Gunakan elemen semantik <code>&lt;details&gt;</code> dan <code>&lt;summary&gt;</code>. Browser otomatis menangani buka-tutup konten saat judul diklik.
+                    <span class="code-snippet">&lt;details&gt;
+  &lt;summary&gt;Klik Judul&lt;/summary&gt;
+  &lt;p&gt;Isi pesan rahasia&lt;/p&gt;
+&lt;/details&gt;</span>
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-1" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 2: HTML -->
+          <article class="flashcard-item" data-cat="html">
+            <input type="checkbox" id="flip-2" class="sr-input flip-check">
+            <input type="checkbox" id="master-2" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-2" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">HTML5</span>
+                    <span class="card-number">#02</span>
+                  </div>
+                  <div class="card-question">
+                    Mengapa atribut <code>for="..."</code> pada elemen <code>&lt;label&gt;</code> sangat penting untuk trik interaktif HTML &amp; CSS?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">Jawaban #02</span>
+                    <span class="card-number">Aksesibilitas &amp; State</span>
+                  </div>
+                  <div class="card-answer">
+                    Atribut <code>for="idInput"</code> menghubungkan label dengan <code>&lt;input id="idInput"&gt;</code>. Saat label diklik di mana saja, status <code>:checked</code> pada input berubah walaupun inputnya disembunyikan.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-2" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 3: HTML -->
+          <article class="flashcard-item" data-cat="html">
+            <input type="checkbox" id="flip-3" class="sr-input flip-check">
+            <input type="checkbox" id="master-3" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-3" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">HTML5</span>
+                    <span class="card-number">#03</span>
+                  </div>
+                  <div class="card-question">
+                    Apa perbedaan fungsi antara tag <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, dan <code>&lt;article&gt;</code> pada struktur halaman web?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-html">Jawaban #03</span>
+                    <span class="card-number">Struktur Semantik</span>
+                  </div>
+                  <div class="card-answer">
+                    <code>&lt;main&gt;</code> membungkus konten utama halaman (hanya 1 per halaman), <code>&lt;section&gt;</code> mengelompokkan bab bertema, sedangkan <code>&lt;article&gt;</code> untuk item mandiri seperti kartu atau pos blog.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-3" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 4: CSS -->
+          <article class="flashcard-item" data-cat="css">
+            <input type="checkbox" id="flip-4" class="sr-input flip-check">
+            <input type="checkbox" id="master-4" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-4" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">CSS3</span>
+                    <span class="card-number">#04</span>
+                  </div>
+                  <div class="card-question">
+                    Properti CSS apa yang wajib dipasang agar efek putar kartu 3D (<code>rotateY(180deg)</code>) tidak memperlihatkan sisi belakang secara terbalik?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">Jawaban #04</span>
+                    <span class="card-number">3D Transform</span>
+                  </div>
+                  <div class="card-answer">
+                    Gunakan <code>transform-style: preserve-3d</code> pada pembungkus kartu dan pasang <code>backface-visibility: hidden</code> pada sisi depan maupun belakang kartu.
+                    <span class="code-snippet">.card-face {
+  backface-visibility: hidden;
+}</span>
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-4" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 5: CSS -->
+          <article class="flashcard-item" data-cat="css">
+            <input type="checkbox" id="flip-5" class="sr-input flip-check">
+            <input type="checkbox" id="master-5" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-5" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">CSS3</span>
+                    <span class="card-number">#05</span>
+                  </div>
+                  <div class="card-question">
+                    Bagaimana cara kerja selektor modern <code>:has()</code> untuk membuat fitur <em>Dark Mode</em> tanpa JavaScript?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">Jawaban #05</span>
+                    <span class="card-number">Parent Selector</span>
+                  </div>
+                  <div class="card-answer">
+                    <code>body:has(#theme-toggle:checked)</code> mendeteksi apakah checkbox di dalam halaman sedang dicentang, lalu otomatis mengganti nilai CSS Variables pada seluruh halaman.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-5" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 6: CSS -->
+          <article class="flashcard-item" data-cat="css">
+            <input type="checkbox" id="flip-6" class="sr-input flip-check">
+            <input type="checkbox" id="master-6" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-6" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">CSS3</span>
+                    <span class="card-number">#06</span>
+                  </div>
+                  <div class="card-question">
+                    Bagaimana cara menghitung skor atau jumlah checkbox yang dicentang secara otomatis hanya dengan CSS?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-css">Jawaban #06</span>
+                    <span class="card-number">CSS Counters</span>
+                  </div>
+                  <div class="card-answer">
+                    Inisialisasi dengan <code>counter-reset: skor</code>, tambahkan <code>counter-increment: skor</code> pada <code>input:checked</code>, lalu tampilkan via <code>content: counter(skor)</code>.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-6" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 7: GIT & GITHUB -->
+          <article class="flashcard-item" data-cat="git">
+            <input type="checkbox" id="flip-7" class="sr-input flip-check">
+            <input type="checkbox" id="master-7" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-7" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">GitHub Pages</span>
+                    <span class="card-number">#07</span>
+                  </div>
+                  <div class="card-question">
+                    Apa nama file HTML utama yang wajib digunakan agar GitHub Pages langsung menampilkan halaman web saat alamat repo dibuka?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">Jawaban #07</span>
+                    <span class="card-number">Entry Point</span>
+                  </div>
+                  <div class="card-answer">
+                    Beri nama file utama Anda <code>index.html</code> (huruf kecil semua) di folder utama (<em>root</em>) repositori agar server GitHub Pages langsung merendernya sebagai halaman beranda.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-7" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 8: GIT & GITHUB -->
+          <article class="flashcard-item" data-cat="git">
+            <input type="checkbox" id="flip-8" class="sr-input flip-check">
+            <input type="checkbox" id="master-8" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-8" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">GitHub Pages</span>
+                    <span class="card-number">#08</span>
+                  </div>
+                  <div class="card-question">
+                    Bagaimana format nama repositori khusus jika Anda ingin website tampil di domain utama <code>username.github.io</code>?
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">Jawaban #08</span>
+                    <span class="card-number">User Site</span>
+                  </div>
+                  <div class="card-answer">
+                    Nama repositori harus persis <code>&lt;username-anda&gt;.github.io</code>. Untuk repositori proyek biasa, URL-nya akan menjadi <code>username.github.io/nama-repo</code>.
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-8" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+
+          <!-- CARD 9: GIT & GITHUB -->
+          <article class="flashcard-item" data-cat="git">
+            <input type="checkbox" id="flip-9" class="sr-input flip-check">
+            <input type="checkbox" id="master-9" class="sr-input mastered-check">
+            <div class="card-scene">
+              <label for="flip-9" class="card-flipper">
+                <div class="card-face card-front">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">Git CLI</span>
+                    <span class="card-number">#09</span>
+                  </div>
+                  <div class="card-question">
+                    Sebutkan 3 perintah Git berurutan untuk menyimpan perubahan file HTML lokal dan mengunggahnya ke GitHub!
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik kartu untuk membalik</span>
+                    <span>↪ Jawaban</span>
+                  </div>
+                </div>
+                <div class="card-face card-back">
+                  <div class="card-top-bar">
+                    <span class="cat-badge cat-git">Jawaban #09</span>
+                    <span class="card-number">Alur Kerja Git</span>
+                  </div>
+                  <div class="card-answer">
+                    Jalankan 3 perintah dasar ini di terminal:
+                    <span class="code-snippet">git add .
+git commit -m "Update halaman flashcard"
+git push origin main</span>
+                  </div>
+                  <div class="card-footer-hint">
+                    <span>Klik untuk kembali</span>
+                    <span>↩ Pertanyaan</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <label for="master-9" class="mastered-label">
+              <span class="mastered-text-todo">○ Tandai Sudah Paham</span>
+              <span class="mastered-text-done">✓ Sudah Dikuasai!</span>
+            </label>
+          </article>
+        </div>
+      </section>
+
+      <!-- MODE 2: PURE CSS INTERACTIVE QUIZ -->
+      <section class="section-quiz">
+        <div class="quiz-header-card">
+          <div>
+            <h2>Uji Pemahaman Cepat (Tanpa JS)</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Pilih salah satu jawaban di bawah untuk langsung memeriksa hasilnya dan melihat skor otomatis.
+            </p>
+          </div>
+          <div class="score-pill">
+            🎯 Skor Kuis: <strong class="quiz-score-number"></strong> / 4 Benar
+          </div>
+        </div>
+
+        <div class="quiz-list">
+          <!-- Q1 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title">1. Selektor CSS mana yang memungkinkan kita mengubah gaya halaman berdasarkan checkbox yang dicentang di dalamnya?</div>
+            <div class="quiz-options">
+              <input type="radio" name="q1" id="q1-a" class="sr-input quiz-wrong-opt">
+              <label for="q1-a" class="quiz-opt-label"><code>:before()</code></label>
+
+              <input type="radio" name="q1" id="q1-b" class="sr-input quiz-correct-opt">
+              <label for="q1-b" class="quiz-opt-label"><code>:has(:checked)</code></label>
+
+              <input type="radio" name="q1" id="q1-c" class="sr-input quiz-wrong-opt">
+              <label for="q1-c" class="quiz-opt-label"><code>:focus-within</code></label>
+            </div>
+            <div class="quiz-explanation">
+              <strong>Penjelasan:</strong> Pseudo-class <code>:has()</code> berfungsi sebagai <em>parent selector</em> sehingga elemen induk seperti <code>body</code> dapat merespons status <code>:checked</code> pada elemen anak.
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title">2. Agar sisi belakang kartu 3D tidak terlihat menembus sisi depan saat belum dibalik, properti apa yang digunakan?</div>
+            <div class="quiz-options">
+              <input type="radio" name="q2" id="q2-a" class="sr-input quiz-correct-opt">
+              <label for="q2-a" class="quiz-opt-label"><code>backface-visibility: hidden</code></label>
+
+              <input type="radio" name="q2" id="q2-b" class="sr-input quiz-wrong-opt">
+              <label for="q2-b" class="quiz-opt-label"><code>overflow: clip</code></label>
+
+              <input type="radio" name="q2" id="q2-c" class="sr-input quiz-wrong-opt">
+              <label for="q2-c" class="quiz-opt-label"><code>z-index: -1</code></label>
+            </div>
+            <div class="quiz-explanation">
+              <strong>Penjelasan:</strong> <code>backface-visibility: hidden</code> menyembunyikan bagian punggung elemen saat diputar 180 derajat pada sumbu Y atau X.
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title">3. Apa nama file utama yang harus diunggah ke repositori GitHub agar langsung tampil sebagai beranda di GitHub Pages?</div>
+            <div class="quiz-options">
+              <input type="radio" name="q3" id="q3-a" class="sr-input quiz-wrong-opt">
+              <label for="q3-a" class="quiz-opt-label"><code>home.html</code></label>
+
+              <input type="radio" name="q3" id="q3-b" class="sr-input quiz-wrong-opt">
+              <label for="q3-b" class="quiz-opt-label"><code>main.html</code></label>
+
+              <input type="radio" name="q3" id="q3-c" class="sr-input quiz-correct-opt">
+              <label for="q3-c" class="quiz-opt-label"><code>index.html</code></label>
+            </div>
+            <div class="quiz-explanation">
+              <strong>Penjelasan:</strong> Server statis seperti GitHub Pages secara otomatis mencari file bernama <code>index.html</code> sebagai pintu masuk utama situs Anda.
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title">4. Bagaimana cara membuat tombol "Reset" yang mengosongkan semua pilihan input tanpa JavaScript?</div>
+            <div class="quiz-options">
+              <input type="radio" name="q4" id="q4-a" class="sr-input quiz-wrong-opt">
+              <label for="q4-a" class="quiz-opt-label">Menggunakan <code>&lt;a href="#"&gt;</code></label>
+
+              <input type="radio" name="q4" id="q4-b" class="sr-input quiz-correct-opt">
+              <label for="q4-b" class="quiz-opt-label">Membungkus dengan <code>&lt;form&gt;</code> &amp; <code>&lt;button type="reset"&gt;</code></label>
+
+              <input type="radio" name="q4" id="q4-c" class="sr-input quiz-wrong-opt">
+              <label for="q4-c" class="quiz-opt-label">Menggunakan <code>&lt;meta http-equiv="refresh"&gt;</code></label>
+            </div>
+            <div class="quiz-explanation">
+              <strong>Penjelasan:</strong> Elemen <code>&lt;button type="reset"&gt;</code> di dalam <code>&lt;form&gt;</code> merupakan fitur bawaan HTML untuk mengembalikan seluruh checkbox dan radio button ke kondisi awal.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODE 3: GITHUB PAGES DEPLOYMENT GUIDE -->
+      <section class="section-guide">
+        <div class="guide-card">
+          <div>
+            <h2>Langkah Mudah Mengunggah Halaman Ini ke GitHub Pages</h2>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">
+              Karena aplikasi ini hanya terdiri dari 1 file HTML mandiri (CSS sudah menyatu di dalamnya), Anda bisa mengonlinekannya dalam 2 menit:
+            </p>
+          </div>
+
+          <div class="step-list">
+            <div class="step-box">
+              <div class="step-num">1</div>
+              <h3>Buat Repositori Baru</h3>
+              <p>Masuk ke akun GitHub Anda, klik tombol <strong>New Repository</strong>, beri nama (misalnya <code>flashcard-belajar</code>), dan pilih <strong>Public</strong>.</p>
+            </div>
+            <div class="step-box">
+              <div class="step-num">2</div>
+              <h3>Unggah sebagai <code>index.html</code></h3>
+              <p>Unduh kode halaman ini, ubah namanya menjadi <code>index.html</code>, lalu unggah melalui menu <strong>Add file &rarr; Upload files</strong> di GitHub dan klik <strong>Commit changes</strong>.</p>
+            </div>
+            <div class="step-box">
+              <div class="step-num">3</div>
+              <h3>Aktifkan GitHub Pages</h3>
+              <p>Buka tab <strong>Settings &rarr; Pages</strong> pada repositori Anda. Pada bagian <strong>Branch</strong>, pilih <code>main</code> lalu klik <strong>Save</strong>. Website Anda akan aktif dalam ~1 menit!</p>
+            </div>
+          </div>
+
+          <details class="faq-item">
+            <summary>💡 Tips Kustomisasi: Bagaimana cara menambah kartu baru?</summary>
+            <p>
+              Cukup salin salah satu blok <code>&lt;article class="flashcard-item" data-cat="html"&gt;...&lt;/article&gt;</code> di dalam kode HTML, lalu ganti ID uniknya menjadi <code>flip-10</code> dan <code>master-10</code> agar kartu baru berfungsi mandiri.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>🎨 Tips Desain: Bagaimana cara mengganti warna tema?</summary>
+            <p>
+              Ubah nilai variabel warna pada bagian <code>:root</code> di paling atas blok <code>&lt;style&gt;</code>, misalnya mengganti <code>--accent: #4f46e5;</code> dengan warna favorit Anda.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </form>
+</body>
 </html>
